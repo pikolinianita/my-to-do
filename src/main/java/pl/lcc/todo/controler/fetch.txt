@@ -1,0 +1,8 @@
+
+fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name:'hop'}) })
+ .then(response => response.json())
+  .then(json => console.log(json))
+
+fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"name":"hip","tags":["tak", "nie"],"reward":"Korki","icon":"default"}) })
+ .then(response => response.json())
+  .then(json => console.log(json))
