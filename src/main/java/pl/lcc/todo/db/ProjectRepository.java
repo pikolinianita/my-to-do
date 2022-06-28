@@ -4,6 +4,7 @@
  */
 package pl.lcc.todo.db;
 
+import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import pl.lcc.todo.entities.ProjectEntity;
 
@@ -13,5 +14,5 @@ import pl.lcc.todo.entities.ProjectEntity;
  */
 public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
 
-    public ProjectEntity findByName(String kiko);
+    public Optional<ProjectEntity> findByName(String kiko);
 }

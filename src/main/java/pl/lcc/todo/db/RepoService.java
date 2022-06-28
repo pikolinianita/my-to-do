@@ -1,5 +1,6 @@
 package pl.lcc.todo.db;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
@@ -20,9 +21,8 @@ public class RepoService {
 
     public boolean createProject(ProjectReq source) {
 
-        System.out.println(projectRepo);
-        System.out.println(projectRepo.count());
-        if (projectRepo.findByName(source.name()) == null) {
+        System.out.println("number of projects" + projectRepo.count());
+        if (projectRepo.findByName(source.name()).isEmpty()) {
             projectRepo.save(new ProjectEntity(source));
             return true;
         } else {
@@ -30,7 +30,7 @@ public class RepoService {
         }
     }
 
-    public ProjectEntity getProjectByName(String name){
+    public Optional<ProjectEntity> getProjectByName(String name){
        return projectRepo.findByName(name);
     }
     

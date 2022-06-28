@@ -5,6 +5,9 @@
 package pl.lcc.todo.controler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,18 +28,29 @@ import pl.lcc.todo.entities.ProjectReq;
 public class ToDoController {
 
     RepoService repos;
+    
+StopWatch timeMeasure;
 
     public ToDoController(RepoService repos) {
         this.repos = repos;
+        timeMeasure = new StopWatch();
         System.out.println("Controller Constructor");
-        System.out.println(repos);
+        
     }
 
     @PostMapping(value = "/project")
-    boolean createProject(@RequestBody ProjectReq req) {
-        log.info("project created: " + req);
-        var result = repos.createProject(req);
+    ResponseEntity<?> createProject(@RequestBody ProjectReq req) {
+        timeMeasure.start();
+        ResponseEntity<?> result;
+        log.info("project: " + req);
+        if (repos.createProject(req)) {
+            result = ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            result = ResponseEntity.status(HttpStatus.CONFLICT).body("Project with this name alreadye exist");
+        }
+        timeMeasure.stop();
         System.out.println(result);
+        System.out.println("project created in " + timeMeasure.getLastTaskTimeMillis() + "ms");
         return result;
     }
 
@@ -53,12 +67,15 @@ public class ToDoController {
     }
 
     @GetMapping(value = "/project/{name}")
-    ProjectDTO getProject(@PathVariable String name) {
+    ResponseEntity<ProjectDTO> getProject(@PathVariable String name) {
 
-        log.info("project get");
-        var result = new ProjectDTO (repos.getProjectByName(name));
+        log.info("project get" +  name);
+        var result = repos.getProjectByName(name)
+                .map(ProjectDTO::new)
+                .map(ResponseEntity::ok);
         log.info(result.toString());
-        return result;
+        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
+        return result.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping(value = "/task")
@@ -74,6 +91,4 @@ public class ToDoController {
     }
 }
 
-record TestR(String name) {
-
-};
+//record TestR(String name) {}

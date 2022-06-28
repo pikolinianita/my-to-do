@@ -33,7 +33,7 @@ public class ProjectEntity {
     @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "tag")
     Set<String> tags;
-
+   
     @Nullable
     String reward;
 
