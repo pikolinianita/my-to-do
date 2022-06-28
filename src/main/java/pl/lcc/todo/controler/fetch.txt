@@ -6,3 +6,16 @@ fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Ty
 fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"name":"hip","tags":["tak", "nie"],"reward":"Korki","icon":"default"}) })
  .then(response => response.json())
   .then(json => console.log(json))
+
+fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"name":"heep","tags":["tak", "nie"],"reward":"Korki","icon":"default"}) })
+ .then(response => response.text())
+  .then(json => console.log(json))
+
+fetch('http://localhost:8080/api/project',{method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"name":"heilep","tags":["tak", "nie"],"reward":"Korki","icon":"default"}) })
+ .then(response => { 
+    console.log(response.status); 
+    return response.text()} )
+ .then(text => console.log(text))
+
+SCRIPT TO 'e:/dump.sql';
+call CSVWRITE ( 'e:/kiko.csv', 'SELECT * FROM TAGS' ) 
