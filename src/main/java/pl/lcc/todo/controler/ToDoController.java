@@ -68,14 +68,15 @@ StopWatch timeMeasure;
 
     @GetMapping(value = "/project/{name}")
     ResponseEntity<ProjectDTO> getProject(@PathVariable String name) {
-
+        timeMeasure.start();
         log.info("project get" +  name);
         var result = repos.getProjectByName(name)
-                .map(ProjectDTO::new)
-                .map(ResponseEntity::ok);
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         log.info(result.toString());
+        timeMeasure.stop();
         System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
-        return result.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return result;
     }
 
     @GetMapping(value = "/task")

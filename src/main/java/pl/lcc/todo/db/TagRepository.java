@@ -6,13 +6,14 @@ package pl.lcc.todo.db;
 
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
-import pl.lcc.todo.entities.ProjectEntity;
+import pl.lcc.todo.entities.TagEntity;
 
 /**
  *
  * @author piko
  */
-public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
-
-    public Optional<ProjectEntity> findByName(String name);
+public interface TagRepository extends CrudRepository<TagEntity, Long>{
+    
+    public Optional<TagEntity> findByName(String name);
+    
 }

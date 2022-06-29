@@ -1,6 +1,7 @@
 package pl.lcc.todo.entities;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -9,7 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -18,6 +24,7 @@ import org.springframework.lang.Nullable;
  * @author piko
  */
 @Getter
+@Setter
 @Entity
 public class ProjectEntity {
 
@@ -28,11 +35,15 @@ public class ProjectEntity {
     @NonNull
     String name;
 
-    @Nullable
-    @ElementCollection
-    @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "tag")
-    Set<String> tags;
+//    @Nullable
+//    @ElementCollection
+//    @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "id"))
+//    @Column(name = "tag")
+//    Set<String> tags;
+    
+    @ManyToMany
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    Set<TagEntity> tags;
    
     @Nullable
     String reward;
@@ -48,7 +59,6 @@ public class ProjectEntity {
         } else {
             this.icon = source.icon();
         }
-        this.tags = source.tags();
 
     }
 
