@@ -1,3 +1,4 @@
+
 package pl.lcc.todo.entities;
 
 import java.util.Objects;
@@ -14,10 +15,11 @@ import org.springframework.lang.NonNull;
  *
  * @author piko
  */
+
 @Entity
 @Getter
 @ToString
-public class TagEntity {
+public class RewardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,15 +29,15 @@ public class TagEntity {
     @NaturalId
     String name;
 
-    public TagEntity(String name) {
+    public RewardEntity(String name) {
         this.name = name;
     }
 
-    protected TagEntity() {
+    protected RewardEntity() {
         System.out.println("Constructor for Hibernate - tag");
     }
-
-    @Override
+    
+     @Override
     public int hashCode() {
        
         return name.hashCode();
@@ -47,4 +49,5 @@ public class TagEntity {
         return Objects.nonNull(obj) && name.equals(obj);
 
     }
+    
 }

@@ -27,7 +27,7 @@ import pl.lcc.todo.entities.ProjectReq;
 @RequestMapping("/api")
 public class ToDoController {
 
-    RepoService repos;
+RepoService repos;
     
 StopWatch timeMeasure;
 

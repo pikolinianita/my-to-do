@@ -63,7 +63,7 @@ public class ProjectEntity {
     }
 
     protected ProjectEntity() {
-        System.out.println("Constructor for Hibernate - project");
+        System.out.println("Constructor for Hibernate - project Entity");
     }
 
     @Override
