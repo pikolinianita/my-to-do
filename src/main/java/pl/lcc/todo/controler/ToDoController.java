@@ -43,7 +43,7 @@ StopWatch timeMeasure;
         timeMeasure.start();
         ResponseEntity<?> result;
         log.info("project: " + req);
-        if (repos.createProject(req)) {
+        if (repos.createProject(1, req)) {
             result = ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             result = ResponseEntity.status(HttpStatus.CONFLICT).body("Project with this name alreadye exist");

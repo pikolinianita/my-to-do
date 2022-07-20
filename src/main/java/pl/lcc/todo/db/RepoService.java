@@ -11,6 +11,8 @@ import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
 import pl.lcc.todo.entities.RewardEntity;
 import pl.lcc.todo.entities.TagEntity;
+import pl.lcc.todo.entities.UserEntity;
+import pl.lcc.todo.entities.UserReq;
 
 /**
  *
@@ -24,27 +26,38 @@ public class RepoService {
     TagRepository tagRepo;
 
     RewardRepository rewRepo;
+    
+    UserRepository userRepo;
 
-    public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo) {
+    public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo, UserRepository userRepo) {
         this.projectRepo = projectRepo;
         this.tagRepo = tagRepo;
         this.rewRepo = rewRepo;
+        this.userRepo = userRepo;
         System.out.println("repoServ constructor");
     }
 
     @Transactional
-    public boolean createProject(ProjectReq source) {
+    public boolean createProject(long userId, ProjectReq source) {
 
         System.out.println("number of projects" + projectRepo.count());
-        if (projectRepo.findByName(source.name()).isEmpty()) {
-            saveNewProject(source);
+        var owner = userRepo.findById(userId).orElseThrow();
+        if (canCreateProject(userId, source.name())) {
+            saveNewProject(userId, source);
             return true;
         } else {
             return false;
+                    
+//        if (projectRepo.findByName(source.name()).isEmpty()) {
+//            saveNewProject(userId, source);
+//            return true;
+//        } else {
+//            return false;
+//        }
         }
     }
 
-    private void saveNewProject(ProjectReq source) {
+    private void saveNewProject(long userId, ProjectReq source) {
         var entity = new ProjectEntity(source);
         var tags = source.tags().stream()
                 .map(name -> {
@@ -72,11 +85,34 @@ public class RepoService {
         }
     }
 
+    public Optional<Long> findUserID(String name){
+        return userRepo.findByName(name).map(UserEntity::getId);
+    }
+    
+    @Transactional
+    public boolean createUser(UserReq source) {
+
+        System.out.println("number of users" + userRepo.count());
+        if (userRepo.findByName(source.name()).isEmpty()) {
+            userRepo.save(new UserEntity(source));
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 //    public boolean addRewardToProject(long project, long reward){
 //       var proj = projectRepo.findById(project).orElseThrow();
 //       var rew = rewRepo.findById(reward).orElseThrow().getId();
 //       proj.setReward(reward);
 //       return true;
 //    }
+
+    private boolean canCreateProject(long userId, String name) {
+        
+        
+        
+        return false;
+    }
     
 }

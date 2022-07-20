@@ -1,12 +1,17 @@
-
 package pl.lcc.todo.entities;
 
+import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+
 import org.springframework.lang.NonNull;
 
 /**
@@ -19,12 +24,32 @@ import org.springframework.lang.NonNull;
 public class UserEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
-    
+
     @NonNull
     String name;
-    
-    @OneToMany
+
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    // @JoinColumn(name = "project_entity_id")
+    @JoinColumn(name = "owner_id")
     Set<ProjectEntity> projects;
-    
+
+    public UserEntity(UserReq name) {
+        this.name = name.name();
+        projects = new HashSet<>();
+    }
+
+    public UserEntity() {
+        System.out.println("Constructor for Hibernate - user");
+    }
+
+    public UserEntity addProject(ProjectEntity project) {
+
+        projects.add(project);
+        project.setOwner(this);
+        return this;
+    }
+
 }
