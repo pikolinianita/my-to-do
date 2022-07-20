@@ -109,10 +109,10 @@ public class RepoService {
 //    }
 
     private boolean canCreateProject(long userId, String name) {
+      return ! projectRepo.findByOwnerAndName(null, name).isEmpty();
         
         
-        
-        return false;
+        //return false;
     }
     
 }

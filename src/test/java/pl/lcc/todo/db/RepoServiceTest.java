@@ -7,7 +7,6 @@ package pl.lcc.todo.db;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,6 +15,7 @@ import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
 import pl.lcc.todo.entities.UserEntity;
 import pl.lcc.todo.entities.UserReq;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -64,13 +64,16 @@ public class RepoServiceTest {
 
     @Test
     public void testInsertTwoDifferent() {
+        service.createUser(new UserReq("Worker"));
+        var userId = service.findUserID("Worker").get();
+        
         SoftAssertions softly = new SoftAssertions();
         var input1 = new ProjectReq("First Project", Set.of("tag 1", "tag 2"), "some reward", "some icon");
         var input2 = new ProjectReq("Sec Project", Set.of("tag 1a", "tag 2a", "tag 4a"), "some reward 2", "some icon 2");
 
-        var trueResult = service.createProject(0, input1);
+        var trueResult = service.createProject(userId, input1);
 
-        var secondResult = service.createProject(0, input2);
+        var secondResult = service.createProject(userId, input2);
 
         softly.assertThat(trueResult).as("Created").isTrue();
         softly.assertThat(secondResult).as("Created").isTrue();
@@ -82,13 +85,16 @@ public class RepoServiceTest {
 
     @Test
     public void testInsertDifferentWithSameTags() {
+         service.createUser(new UserReq("Worker"));
+        var userId = service.findUserID("Worker").get();
+        
         SoftAssertions softly = new SoftAssertions();
         var input1 = new ProjectReq("First Project", Set.of("tag 1", "tag 2"), "some reward", "some icon");
         var input2 = new ProjectReq("Sec Project", Set.of("tag 1", "tag 2", "tag 4a"), "some reward 2", "some icon 2");
 
-        var trueResult = service.createProject(0, input1);
+        var trueResult = service.createProject(userId, input1);
 
-        var secondResult = service.createProject(0, input2);
+        var secondResult = service.createProject(userId, input2);
 
         softly.assertThat(trueResult).as("Created").isTrue();
         softly.assertThat(secondResult).as("Created").isTrue();
@@ -155,5 +161,22 @@ public class RepoServiceTest {
         System.out.println(URepo.count());
         
         System.out.println(util.dumpDB("delete.me"));
+    }
+    
+    @Test
+    void testRepoByNameAndId(){
+        var user1 = new UserReq("Worker");        
+        var project1 = new ProjectReq("First Project", Set.of("tag 1", "tag 2"), "some reward", "some icon");
+        service.createUser(user1);
+        var user = URepo.findAll().iterator().next();
+        user.addProject(new ProjectEntity(project1));
+        URepo.save(user);
+        
+        System.out.println("#################################");
+        System.out.println(PRepo.findByOwnerAndName(user, "First Project"));
+        assertThat(PRepo.findByOwnerAndName(user, "First Project")).isNotEmpty();
+          System.out.println("#################################");
+        System.out.println(PRepo.findByOwnerAndName(user, "Second Project"));
+        assertThat(PRepo.findByOwnerAndName(user, "Second Project")).isEmpty();
     }
 }
