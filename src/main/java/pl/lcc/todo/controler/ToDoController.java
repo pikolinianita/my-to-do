@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lcc.todo.db.RepoService;
 import pl.lcc.todo.entities.ProjectDTO;
+import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
 
 /**
@@ -43,7 +44,7 @@ StopWatch timeMeasure;
         timeMeasure.start();
         ResponseEntity<?> result;
         log.info("project: " + req);
-        if (repos.createProject(1, req)) {
+        if (repos.createProject(1, req).isEmpty()) {
             result = ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             result = ResponseEntity.status(HttpStatus.CONFLICT).body("Project with this name alreadye exist");
@@ -67,10 +68,13 @@ StopWatch timeMeasure;
     }
 
     @GetMapping(value = "/project/{name}")
-    ResponseEntity<ProjectDTO> getProject(@PathVariable String name) {
+    ResponseEntity<ProjectEntity> getProject(@PathVariable String name) {
         timeMeasure.start();
         log.info("project get" +  name);
-        var result = repos.getProjectByName(name)
+        
+        //TODO getProjectByName
+        
+        var result = repos.getProjectByName(0, name)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         log.info(result.toString());

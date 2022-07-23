@@ -1,10 +1,8 @@
 package pl.lcc.todo.entities;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,8 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -36,25 +33,31 @@ public class ProjectEntity {
     @NonNull
     String name;
 
-//    @Nullable
-//    @ElementCollection
-//    @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "id"))
-//    @Column(name = "tag")
-//    Set<String> tags;
-    
-    @ManyToMany
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST})
+    //@Cascade()
     Set<TagEntity> tags;
-   
+
     @Nullable
     String reward;
 
     @NonNull
-    String icon; 
-    
+    String icon;
+
     @ManyToOne
     UserEntity owner;
+    
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+   // @JoinColumn(name = "owner_id")
+    Set<EventEntity> events;
 
+    public ProjectEntity addEvent(EventEntity event){
+        events.add(event);
+        event.setProject(this);
+        return this;
+    }
+    
+    
     public ProjectEntity(ProjectReq source) {
         this.name = source.name();
         this.reward = source.reward();
@@ -63,7 +66,7 @@ public class ProjectEntity {
         } else {
             this.icon = source.icon();
         }
-
+        events = new HashSet<>();
     }
 
     protected ProjectEntity() {
@@ -72,9 +75,7 @@ public class ProjectEntity {
 
     @Override
     public String toString() {
-        return "ProjectEntity: {" + "id=" + id + ", name=" + name + ", tags=" + tags + ", reward=" + reward + ", icon=" + icon + '}';
+        return "ProjectEntity{" + "id=" + id + ", name=" + name + ", tags=" + tags + ", reward=" + reward + ", icon=" + icon + ", owner=" + owner.getId() + '}';
     }
-    
-    
 
 }

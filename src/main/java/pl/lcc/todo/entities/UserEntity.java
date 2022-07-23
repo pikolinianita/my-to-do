@@ -32,7 +32,6 @@ public class UserEntity {
 
     @OneToMany(cascade = CascadeType.ALL,
             orphanRemoval = true)
-    // @JoinColumn(name = "project_entity_id")
     @JoinColumn(name = "owner_id")
     Set<ProjectEntity> projects;
 
@@ -52,4 +51,11 @@ public class UserEntity {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "UserEntity{" + "id=" + id + ", name=" + name + ", projects=" + projects + '}';
+    }
+
+    
+    
 }

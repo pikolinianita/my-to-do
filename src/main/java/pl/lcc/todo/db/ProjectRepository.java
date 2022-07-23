@@ -17,8 +17,10 @@ import pl.lcc.todo.entities.UserEntity;
  */
 public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
 
-    public Optional<ProjectEntity> findByName(String name);
-    
-   // @Query("SELECT p FROM ProjectEntity p where p.owner = ?1")
+    public Optional<ProjectEntity> findByName(String name);    
+   
     public List<ProjectEntity> findByOwnerAndName(UserEntity user, String name);
+
+    // @Query("SELECT p FROM ProjectEntity p where p.name = ?2")
+    public Optional<ProjectEntity> findByOwner_IdAndName(long userId, String name);
 }
