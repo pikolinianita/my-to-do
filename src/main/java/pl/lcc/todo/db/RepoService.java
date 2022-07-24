@@ -26,6 +26,8 @@ public class RepoService {
     RewardRepository rewRepo;
 
     UserRepository userRepo;
+    
+    EventRepository eventRepo;
 
     public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo, UserRepository userRepo) {
         this.projectRepo = projectRepo;
@@ -38,18 +40,22 @@ public class RepoService {
     @Transactional
     public Optional<ProjectEntity> createProject(long userId, ProjectReq source) {
 
-        System.out.println("number of projects" + projectRepo.count());
+        System.out.println("---number of projects" + projectRepo.count());
         var owner = userRepo.findById(userId).orElseThrow();
         if (canCreateProject(userId, source.name())) {
+            System.out.println("---will create!!!");
             return saveNewProject(owner, source);
         } else {
+            System.out.println("---Existed!!!");
             return Optional.empty();
 
         }
     }
 
     private Optional<ProjectEntity> saveNewProject(UserEntity owner, ProjectReq source) {
+        
         var entity = new ProjectEntity(source);
+        System.out.println("Owner: " + owner.toString() + "  project: " + entity.toString());
         var tags = source.tags().stream()
                 .map(name -> {
                     return tagRepo.findByName(name).orElse(new TagEntity(name));
@@ -57,6 +63,7 @@ public class RepoService {
                 .collect(Collectors.toSet());
         entity.setTags(tags);
         owner.addProject(entity); 
+        System.out.println("Owner: " + owner.toString() + "  project: " + entity.toString());
         return Optional.of(entity);
     }
 
@@ -93,6 +100,14 @@ public class RepoService {
         
         System.out.println("after repo");
         return Optional.of(event);
+    }
+    
+    @Transactional
+    public Optional<EventEntity> deleteEvent(long userId, long projectId, long eventId){
+       var project = projectRepo.findById(projectId).orElseThrow();
+       var event = eventRepo.findById(userId).orElseThrow();
+       project.removeEvent(event);
+       return Optional.of(event);
     }
     
 }

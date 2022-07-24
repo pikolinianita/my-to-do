@@ -50,10 +50,16 @@ public class UserEntity {
         project.setOwner(this);
         return this;
     }
+    
+    public UserEntity removeProject(ProjectEntity project){
+        projects.remove(project);
+        project.setOwner(null);
+        return this;
+    }
 
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", name=" + name + ", projects=" + projects + '}';
+        return "UserEntity{" + "id=" + id + ", name=" + name + ", projects=" + projects.size() + '}';
     }
 
     

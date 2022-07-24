@@ -57,7 +57,8 @@ public class RepoServiceTest {
         URepo.deleteAll();
         PRepo.deleteAll();
         TRepo.deleteAll();
-
+        ERepo.deleteAll();
+        
     }
 
     @Test

@@ -57,6 +57,11 @@ public class ProjectEntity {
         return this;
     }
     
+    public ProjectEntity removeEvent(EventEntity event){
+        events.remove(event);
+        event.setProject(null);
+        return this;
+    }    
     
     public ProjectEntity(ProjectReq source) {
         this.name = source.name();
@@ -71,11 +76,11 @@ public class ProjectEntity {
 
     protected ProjectEntity() {
         System.out.println("Constructor for Hibernate - project Entity");
-    }
-
+    }    
+    
     @Override
     public String toString() {
-        return "ProjectEntity{" + "id=" + id + ", name=" + name + ", tags=" + tags + ", reward=" + reward + ", icon=" + icon + ", owner=" + owner.getId() + '}';
+        return "ProjectEntity{" + "id=" + id + ", name=" + name + ", tags=" + tags + ", reward=" + reward + ", icon=" + icon + ", owner= N/A"  + '}';
     }
 
 }
