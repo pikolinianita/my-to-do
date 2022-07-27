@@ -25,7 +25,7 @@ import pl.lcc.todo.entities.UserReq;
  */
 @DataJpaTest
 @Import({RepoService.class, ReposUtils.class})
-//@Transactional(Transactional.TxType.NOT_SUPPORTED)
+@Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class ServiceRemoveTests {
     
   @Autowired
@@ -62,9 +62,12 @@ public class ServiceRemoveTests {
     
     void createDummyData(){
         var user = service.createUser(new UserReq("Worker")).orElseThrow();
+        var unusedUser = service.createUser(new UserReq("Lazy Guy")).orElseThrow();
         System.out.println(user);
         var project1 = service.createProject(user.getId(), new ProjectReq("Program", Set.of(), "It reward", "It icon")).orElseThrow();
         var project2 = service.createProject(user.getId(), new ProjectReq("Read", Set.of(), "Book reward", "Book icon")).orElseThrow();
+        var project3 = service.createProject(user.getId(), new ProjectReq("Not Started", Set.of(), "No Rewards", "? icon")).orElseThrow();
+        em.flush();
         System.out.println(project1);
         System.out.println(project2);
         service.createEvent(user.getId(), project1.getId(), new EventReq("Back End",LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(3), "Java" ));
@@ -76,8 +79,66 @@ public class ServiceRemoveTests {
     
     @Test
     void testingSetup(){
-        assertThat(URepo.count()).isEqualTo(1);
-        assertThat(PRepo.count()).isEqualTo(2);
+        assertThat(URepo.count()).isEqualTo(2);
+        assertThat(PRepo.count()).isEqualTo(3);
         assertThat(ERepo.count()).isEqualTo(5);
+        util.dumpDB("ServiceRemoveTests1.txt");
+    }
+    
+    @Test
+    void removeUnusedUser(){
+        SoftAssertions softly = new SoftAssertions();
+        var unusedUserId = URepo.findByName("Lazy Guy").orElseThrow().getId();
+        service.removeUser(unusedUserId);
+        em.flush();
+        softly.assertThat(URepo.count()).isEqualTo(1);
+        softly.assertThat(PRepo.count()).isEqualTo(3);
+        softly.assertThat(ERepo.count()).isEqualTo(5);
+        softly.assertAll();
+    }
+    
+    @Test
+    void removeActiveUser(){
+        SoftAssertions softly = new SoftAssertions();
+        var unusedUserId = URepo.findByName("Worker").orElseThrow().getId();
+        service.removeUser(unusedUserId);
+        em.flush();
+        softly.assertThat(URepo.count()).isEqualTo(1);
+        softly.assertThat(PRepo.count()).isEqualTo(0);
+        softly.assertThat(ERepo.count()).isEqualTo(0);
+        softly.assertAll();
+    }
+    
+    @Test
+    void removeActiveProject(){
+        SoftAssertions softly = new SoftAssertions();
+        var UserId = URepo.findByName("Worker").orElseThrow().getId();
+        var usedProjectId = PRepo.findByName("Read").orElseThrow().getId();
+        service.removeProject(UserId, usedProjectId);
+        em.flush();
+        //util.dumpDB("ServiceRemoveTests2.txt");
+        softly.assertThat(URepo.count()).as("users").isEqualTo(2);
+        softly.assertThat(PRepo.count()).as("Projects").isEqualTo(2);
+        softly.assertThat(ERepo.count()).as("Events").isEqualTo(3);
+        softly.assertAll();
+    
+    }
+    
+    @Test
+    void removeNotActiveProject(){
+        SoftAssertions softly = new SoftAssertions();
+        var UserId = URepo.findByName("Worker").orElseThrow().getId();
+        var unusedProjectId = PRepo.findByName("Not Started").orElseThrow().getId();
+        System.out.println("service run!!!!");
+        util.dumpDB("ServiceRemoveTestsBefore.txt");
+        service.removeProject(UserId, unusedProjectId);
+        em.flush();
+        
+        System.out.println("service run!!!!");
+        util.dumpDB("ServiceRemoveTestsAfter.txt");
+        softly.assertThat(URepo.count()).as("users").isEqualTo(2);
+        softly.assertThat(PRepo.count()).as("Projects").isEqualTo(2);
+        softly.assertThat(ERepo.count()).as("Events").isEqualTo(5);
+        softly.assertAll();
     }
 }

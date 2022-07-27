@@ -1,6 +1,7 @@
 package pl.lcc.todo.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -31,7 +32,8 @@ public class UserEntity {
     String name;
 
     @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true
+           )
     @JoinColumn(name = "owner_id")
     Set<ProjectEntity> projects;
 
@@ -56,10 +58,39 @@ public class UserEntity {
         project.setOwner(null);
         return this;
     }
+    
+    public UserEntity removeProject(long projectId){
+        return removeProject(projects.stream().filter(pr -> pr.getId() == projectId).findFirst().orElseThrow());
+    }
 
     @Override
     public String toString() {
         return "UserEntity{" + "id=" + id + ", name=" + name + ", projects=" + projects.size() + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserEntity other = (UserEntity) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
     }
 
     

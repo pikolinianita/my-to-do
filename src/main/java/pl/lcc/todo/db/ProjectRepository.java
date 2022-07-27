@@ -6,7 +6,6 @@ package pl.lcc.todo.db;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.UserEntity;
@@ -20,7 +19,6 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     public Optional<ProjectEntity> findByName(String name);    
    
     public List<ProjectEntity> findByOwnerAndName(UserEntity user, String name);
-
-    // @Query("SELECT p FROM ProjectEntity p where p.name = ?2")
+ 
     public Optional<ProjectEntity> findByOwner_IdAndName(long userId, String name);
 }

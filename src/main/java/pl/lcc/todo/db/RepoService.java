@@ -110,4 +110,18 @@ public class RepoService {
        return Optional.of(event);
     }
     
+    
+    public boolean removeUser(long userId){
+        userRepo.deleteById(userId);
+        return true;
+    }
+    
+    @Transactional
+    public boolean removeProject(long userId, long projectID){
+        var user = userRepo.findById(userId).orElseThrow().removeProject(projectID);
+        
+        //projectRepo.deleteById(projectID);
+        return true;
+    }
+    
 }
