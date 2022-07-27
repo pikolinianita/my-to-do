@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lcc.todo.entities.EventEntity;
 import pl.lcc.todo.entities.EventReq;
+import pl.lcc.todo.entities.ProjectDTO;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
 import pl.lcc.todo.entities.TagEntity;
+import pl.lcc.todo.entities.UserDTO;
 import pl.lcc.todo.entities.UserEntity;
 import pl.lcc.todo.entities.UserReq;
 
@@ -75,6 +77,10 @@ public class RepoService {
         return projectRepo.findByOwner_IdAndName(userId, name);
     }
 
+    public Optional<ProjectDTO> getProject(long userId, long projectId){
+       return projectRepo.findById(projectId).map(ProjectDTO::new);
+    }
+    
     public Optional<UserEntity> findUser(String name) {
         return userRepo.findByName(name);
     }
@@ -122,6 +128,18 @@ public class RepoService {
         
         //projectRepo.deleteById(projectID);
         return true;
+    }
+
+    public Optional<UserDTO> getUserByName(String name) {
+       var userOpt = userRepo.findByName(name);
+       if(userOpt.isEmpty()){
+        return Optional.empty();
+       }
+       else
+       {
+           var user = userOpt.get();
+           return Optional.of(new UserDTO(user.getName(), user.getId(), user.getProjects()));
+       }
     }
     
 }

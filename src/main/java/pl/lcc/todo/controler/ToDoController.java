@@ -18,6 +18,7 @@ import pl.lcc.todo.db.RepoService;
 import pl.lcc.todo.entities.ProjectDTO;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
+import pl.lcc.todo.entities.UserDTO;
 
 /**
  *
@@ -82,6 +83,17 @@ StopWatch timeMeasure;
         System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
         return result;
     }
+    
+    @GetMapping(value = "/project/{userId}/{projectId}")
+    ResponseEntity<ProjectDTO> getProject(@PathVariable long userId, @PathVariable long projectId) {
+         timeMeasure.start();
+         var result = repos.getProject(userId, projectId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+         timeMeasure.stop();
+        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
+        return result;
+    }
 
     @GetMapping(value = "/task")
     String getTask() {
@@ -94,6 +106,18 @@ StopWatch timeMeasure;
         log.info("event get");
         return "['Events']";
     }
+    
+    @GetMapping(value = "/user/{name}")
+    ResponseEntity<UserDTO> findUserAndProjects(@PathVariable String name){
+        timeMeasure.start();
+        var result = repos.getUserByName(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        timeMeasure.stop();
+        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
+        return result;
+    }
+    
 }
 
 //record TestR(String name) {}
