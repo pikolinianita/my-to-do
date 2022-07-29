@@ -14,4 +14,4 @@ USER 1001
 
 RUN ./mvnw package
 
-ENTRYPOINT ["java","-jar","/usr/src/app/target/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","/usr/src/app/target/todo-0.0.1.jar"]
