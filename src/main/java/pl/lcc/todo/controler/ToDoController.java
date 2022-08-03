@@ -35,14 +35,14 @@ StopWatch timeMeasure;
     public ToDoController(RepoService repos) {
         this.repos = repos;
         timeMeasure = new StopWatch();
-        System.out.println("Controller Constructor");
+        log.info("ToDoController Constructor");
         
     }
 
     @PostMapping(value = "/project")
-    ResponseEntity<?> createProject(@RequestBody ProjectReq req) {
+    ResponseEntity<String> createProject(@RequestBody ProjectReq req) {
         timeMeasure.start();
-        ResponseEntity<?> result;
+        ResponseEntity<String> result;
         log.info("project: " + req);
         if (repos.createProject(1, req).isEmpty()) {
             result = ResponseEntity.status(HttpStatus.CREATED).build();
@@ -50,8 +50,7 @@ StopWatch timeMeasure;
             result = ResponseEntity.status(HttpStatus.CONFLICT).body("Project with this name alreadye exist");
         }
         timeMeasure.stop();
-        System.out.println(result);
-        System.out.println("project created in " + timeMeasure.getLastTaskTimeMillis() + "ms");
+        log.info("Project created in " + timeMeasure.getLastTaskTimeMillis() + "ms");
         return result;
     }
 
@@ -79,7 +78,7 @@ StopWatch timeMeasure;
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         log.info(result.toString());
         timeMeasure.stop();
-        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
+        log.info("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
         return result;
     }
 
@@ -95,5 +94,3 @@ StopWatch timeMeasure;
         return "['Events']";
     }
 }
-
-//record TestR(String name) {}
