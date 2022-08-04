@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lcc.todo.entities.EventDTO;
 import pl.lcc.todo.entities.EventEntity;
 import pl.lcc.todo.entities.EventReq;
 import pl.lcc.todo.entities.ProjectDTO;
@@ -33,11 +34,12 @@ public class RepoService {
     
     EventRepository eventRepo;
 
-    public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo, UserRepository userRepo) {
+    public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo, UserRepository userRepo, EventRepository eventRepo) {
         this.projectRepo = projectRepo;
         this.tagRepo = tagRepo;
         this.rewRepo = rewRepo;
         this.userRepo = userRepo;
+        this.eventRepo = eventRepo;
         log.info("repoServ constructor");
     }
 
@@ -50,7 +52,6 @@ public class RepoService {
         } else {
             log.info("Project Existed!!!");
             return Optional.empty();
-
         }
     }
 
@@ -81,6 +82,10 @@ public class RepoService {
     
     public Optional<UserEntity> findUser(String name) {
         return userRepo.findByName(name);
+    }
+    
+    public Optional<UserDTO> findUserWithProjects(long id) {
+        return userRepo.findById(id).map(UserDTO::new);
     }
 
     @Transactional
@@ -121,10 +126,19 @@ public class RepoService {
     public boolean removeProject(long userId, long projectID){
         var user = userRepo.findById(userId).orElseThrow().removeProject(projectID);
         log.info("deleted user: " + user.getName());
-        //projectRepo.deleteById(projectID);
         return true;
     }
 
+<<<<<<< HEAD
+    @Transactional
+    public Optional<ProjectDTO> getProject(long userId, long projectId) {
+       return projectRepo.findByOwner_IdAndId(userId, projectId).map(ProjectDTO::new);        
+    }
+    
+     @Transactional
+    public Optional<EventDTO> getEvent(long userId, long eventId) {
+        return eventRepo.findEventByProject_Owner_IdAndId(userId, eventId).map(EventDTO::new);        
+=======
     public Optional<UserDTO> getUserByName(String name) {
        var userOpt = userRepo.findByName(name);
        if(userOpt.isEmpty()){
@@ -135,6 +149,7 @@ public class RepoService {
            var user = userOpt.get();
            return Optional.of(new UserDTO(user.getName(), user.getId(), user.getProjects()));
        }
+>>>>>>> 168b214f8d2eb9d7205a7823b4a1a801cadfb428
     }
     
 }

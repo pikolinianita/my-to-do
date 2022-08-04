@@ -34,3 +34,6 @@ nbactions.xml
 ### VS Code ###
 .vscode/
 /nbproject/
+
+###My Files###
+*.dmp

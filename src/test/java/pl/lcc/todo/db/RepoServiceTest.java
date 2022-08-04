@@ -149,7 +149,7 @@ public class RepoServiceTest {
         softly.assertThat(correctEntity.get()).isEqualTo(URepo.findByName("Worker").get());
         softly.assertThat(incorrectEntity).isEmpty();
 
-        var resultList = em.createNativeQuery("SCRIPT TO 'backup.txt'").getResultList();
+        var resultList = em.createNativeQuery("SCRIPT TO 'backup.dmp'").getResultList();
         System.out.println(resultList.toString());
 
         softly.assertAll();
@@ -185,7 +185,7 @@ public class RepoServiceTest {
         System.out.println("PR: " + PRepo.count());
         System.out.println("--------------###################---------------");
 
-        System.out.println(util.dumpDB("delete.me"));
+        
 
         softly.assertAll();
     }
