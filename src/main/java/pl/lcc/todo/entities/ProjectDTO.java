@@ -18,4 +18,4 @@ public record ProjectDTO(String name, Set<String> tags, List<EventStub> events, 
     }
 }
 
-record EventStub(long id, String name) {};
+record EventStub(long id, String name) {}
