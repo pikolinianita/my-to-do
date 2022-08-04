@@ -21,4 +21,6 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     public List<ProjectEntity> findByOwnerAndName(UserEntity user, String name);
  
     public Optional<ProjectEntity> findByOwner_IdAndName(long userId, String name);
+    
+    public Optional<ProjectEntity> findByOwner_IdAndId(long userId, long id);
 }

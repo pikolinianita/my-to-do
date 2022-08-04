@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lcc.todo.db.RepoService;
+import pl.lcc.todo.entities.EventDTO;
 import pl.lcc.todo.entities.ProjectDTO;
+import pl.lcc.todo.entities.UserDTO;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
 
@@ -39,7 +41,7 @@ StopWatch timeMeasure;
         
     }
 
-    @PostMapping(value = "/project")
+    @PostMapping(value = "/projectX")
     ResponseEntity<String> createProject(@RequestBody ProjectReq req) {
         timeMeasure.start();
         ResponseEntity<String> result;
@@ -54,43 +56,43 @@ StopWatch timeMeasure;
         return result;
     }
 
-    @PostMapping(value = "/task")
-    String createTask() {
-        log.info("task created");
-        return "post Task";
-    }
-
-    @PostMapping(value = "/event")
-    String createEvent() {
-        log.info("event created");
-        return "post Event";
-    }
-
-    @GetMapping(value = "/project/{name}")
-    ResponseEntity<ProjectEntity> getProject(@PathVariable String name) {
-        timeMeasure.start();
-        log.info("project get" +  name);
-        
-        //TODO getProjectByName
-        
-        var result = repos.getProjectByName(0, name)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        log.info(result.toString());
-        timeMeasure.stop();
-        log.info("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
-        return result;
-    }
-
     @GetMapping(value = "/task")
     String getTask() {
         log.info("task get");
         return "Tasks";
     }
 
-    @GetMapping(value = "/event")
-    String getEvent() {
-        log.info("event get");
-        return "['Events']";
+     @PostMapping(value = "/task")
+    String createTask() {
+        log.info("task created");
+        return "Not Implemented yet - post Task";
+    }
+
+    @PostMapping(value = "/event")
+    String createEvent() {
+        log.info("event created");
+        return "Not Implemented yet - post Event";
+    }
+    
+    @GetMapping(value = "/user/{id}")
+    ResponseEntity<UserDTO> getUser(@PathVariable long id){
+        return repos.findUserWithProjects(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    
+    @GetMapping(value = "/project/{userId}/{projectId}")
+     ResponseEntity<ProjectDTO> getProject(@PathVariable long userId, @PathVariable long projectId){
+         return repos.getProject(userId, projectId)
+                  .map(ResponseEntity::ok)
+                  .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+     }
+     
+    @GetMapping(value = "/event/{userId}/{eventId}")
+    ResponseEntity<EventDTO> getEvent(@PathVariable long userId, @PathVariable long eventId) {
+        
+        return repos.getEvent(userId, eventId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }
