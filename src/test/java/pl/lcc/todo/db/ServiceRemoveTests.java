@@ -142,14 +142,14 @@ public class ServiceRemoveTests {
     
     @Test
     void getUserTest(){
-        var result = service.getUserByName("Worker");
-        var result2 = service.getUserByName("Lazy Guy");
-        var resultEmpty = service.getUserByName("Not Exist");
+        var result = service.findUser("Worker");
+        var result2 = service.findUser("Lazy Guy");
+        var resultEmpty = service.findUser("Not Exist");
         assertThat(resultEmpty).isEmpty();
         assertThat(result).isNotEmpty();
-        assertThat(result.get().name()).isEqualTo("Worker");
-        assertThat(result.get().projects()).hasSize(3);
-        assertThat(result2.get().name()).isEqualTo("Lazy Guy");
-        assertThat(result2.get().projects()).hasSize(0);
+        assertThat(result.get().getName()).isEqualTo("Worker");
+        assertThat(result.get().getProjects()).hasSize(3);
+        assertThat(result2.get().getName()).isEqualTo("Lazy Guy");
+        assertThat(result2.get().getProjects()).hasSize(0);
     }
 }

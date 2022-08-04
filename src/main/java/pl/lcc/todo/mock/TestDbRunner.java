@@ -18,7 +18,7 @@ import pl.lcc.todo.entities.UserReq;
  *
  * @author Nauczyciel
  */
-@Component
+
 public class TestDbRunner implements CommandLineRunner {
 
     @Autowired

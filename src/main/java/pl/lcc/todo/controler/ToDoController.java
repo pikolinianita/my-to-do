@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,6 @@ import pl.lcc.todo.entities.ProjectDTO;
 import pl.lcc.todo.entities.UserDTO;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
-import pl.lcc.todo.entities.UserDTO;
 
 /**
  *
@@ -30,7 +28,6 @@ import pl.lcc.todo.entities.UserDTO;
 @Slf4j
 @RestController
 @RequestMapping("/api")
- @CrossOrigin
 public class ToDoController {
 
 RepoService repos;
@@ -82,30 +79,6 @@ StopWatch timeMeasure;
         return repos.findUserWithProjects(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-<<<<<<< HEAD
-=======
-        log.info(result.toString());
-        timeMeasure.stop();
-        log.info("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
-        return result;
-    }
-    
-    @GetMapping(value = "/project/{userId}/{projectId}")
-    ResponseEntity<ProjectDTO> getProject(@PathVariable long userId, @PathVariable long projectId) {
-         timeMeasure.start();
-         var result = repos.getProject(userId, projectId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-         timeMeasure.stop();
-        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
-        return result;
-    }
-
-    @GetMapping(value = "/task")
-    String getTask() {
-        log.info("task get");
-        return "Tasks";
->>>>>>> 168b214f8d2eb9d7205a7823b4a1a801cadfb428
     }
     
     @GetMapping(value = "/project/{userId}/{projectId}")
@@ -122,16 +95,4 @@ StopWatch timeMeasure;
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    
-    @GetMapping(value = "/user/{name}")
-    ResponseEntity<UserDTO> findUserAndProjects(@PathVariable String name){
-        timeMeasure.start();
-        var result = repos.getUserByName(name)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        timeMeasure.stop();
-        System.out.println("project retrieved in " + timeMeasure.getLastTaskTimeMillis() + "ms");
-        return result;
-    }
-    
 }
