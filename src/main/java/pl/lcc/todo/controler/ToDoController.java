@@ -20,6 +20,8 @@ import pl.lcc.todo.entities.ProjectDTO;
 import pl.lcc.todo.entities.UserDTO;
 import pl.lcc.todo.entities.ProjectEntity;
 import pl.lcc.todo.entities.ProjectReq;
+import pl.lcc.todo.entities.UserReq;
+import pl.lcc.todo.entities.UserEntity;
 
 /**
  *
@@ -72,6 +74,14 @@ StopWatch timeMeasure;
     String createEvent() {
         log.info("event created");
         return "Not Implemented yet - post Event";
+    }
+    
+    @PostMapping(value = "/user")
+    ResponseEntity<Long> createUser(@RequestBody UserReq user){
+       return repos.createUser(user)
+               .map(UserEntity::getId)
+               .map(ResponseEntity::ok)
+               .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     
     @GetMapping(value = "/user/{id}")
