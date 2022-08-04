@@ -31,7 +31,7 @@ public class RepoService {
     RewardRepository rewRepo;
 
     UserRepository userRepo;
-    
+
     EventRepository eventRepo;
 
     public RepoService(ProjectRepository projectRepo, TagRepository tagRepo, RewardRepository rewRepo, UserRepository userRepo, EventRepository eventRepo) {
@@ -56,7 +56,7 @@ public class RepoService {
     }
 
     private Optional<ProjectEntity> saveNewProject(UserEntity owner, ProjectReq source) {
-        
+
         var entity = new ProjectEntity(source);
         var tags = source.tags().stream()
                 .map(name -> {
@@ -64,24 +64,12 @@ public class RepoService {
                 })
                 .collect(Collectors.toSet());
         entity.setTags(tags);
-        owner.addProject(entity); 
+        owner.addProject(entity);
         return Optional.of(entity);
     }
 
     private boolean canCreateProject(long userId, String name) {
         return projectRepo.findByOwner_IdAndName(userId, name).isEmpty();
-    }
-
-    public Optional<ProjectEntity> getProjectByName(long userId, String name) {
-        return projectRepo.findByOwner_IdAndName(userId, name);
-    }
-
-    public Optional<UserEntity> findUser(String name) {
-        return userRepo.findByName(name);
-    }
-    
-    public Optional<UserDTO> findUserWithProjects(long id) {
-        return userRepo.findById(id).map(UserDTO::new);
     }
 
     @Transactional
@@ -96,43 +84,54 @@ public class RepoService {
     }
 
     @Transactional
-    public Optional<EventEntity> createEvent(long userId, long projectId, EventReq req){
-        
+    public Optional<EventEntity> createEvent(long userId, long projectId, EventReq req) {
+
         log.info("create Event");
-        var event = new EventEntity(req);       
-        projectRepo.findById(projectId).orElseThrow().addEvent(event);
+        var event = new EventEntity(req);
+        projectRepo.findByOwner_IdAndId(userId, projectId).orElseThrow().addEvent(event);
         return Optional.of(event);
     }
-    
+
     @Transactional
-    public Optional<EventEntity> deleteEvent(long userId, long projectId, long eventId){
-       var project = projectRepo.findById(projectId).orElseThrow();
-       var event = eventRepo.findById(userId).orElseThrow();
-       project.removeEvent(event);
-       return Optional.of(event);
+    public Optional<EventEntity> deleteEvent(long userId, long projectId, long eventId) {
+        var project = projectRepo.findById(projectId).orElseThrow();
+        var event = eventRepo.findById(userId).orElseThrow();
+        project.removeEvent(event);
+        return Optional.of(event);
     }
-    
-    
-    public boolean removeUser(long userId){
+
+    public boolean removeUser(long userId) {
         userRepo.deleteById(userId);
-        return true;
-    }
-    
-    @Transactional
-    public boolean removeProject(long userId, long projectID){
-        var user = userRepo.findById(userId).orElseThrow().removeProject(projectID);
-        log.info("deleted user: " + user.getName());
         return true;
     }
 
     @Transactional
+    public boolean removeProject(long userId, long projectID) {
+        var user = userRepo.findById(userId).orElseThrow().removeProject(projectID);
+        log.info("deleted project from user: " + user.getName());
+        return true;
+    }
+
+    public Optional<ProjectEntity> getProjectByName(long userId, String name) {
+        return projectRepo.findByOwner_IdAndName(userId, name);
+    }
+
+    public Optional<UserEntity> findUser(String name) {
+        return userRepo.findByName(name);
+    }
+
+    public Optional<UserDTO> findUserWithProjects(long id) {
+        return userRepo.findById(id).map(UserDTO::new);
+    }
+
+    @Transactional
     public Optional<ProjectDTO> getProject(long userId, long projectId) {
-       return projectRepo.findByOwner_IdAndId(userId, projectId).map(ProjectDTO::new);        
+        return projectRepo.findByOwner_IdAndId(userId, projectId).map(ProjectDTO::new);
     }
-    
-     @Transactional
+
+    @Transactional
     public Optional<EventDTO> getEvent(long userId, long eventId) {
-        return eventRepo.findEventByProject_Owner_IdAndId(userId, eventId).map(EventDTO::new);        
+        return eventRepo.findEventByProject_Owner_IdAndId(userId, eventId).map(EventDTO::new);
     }
-    
+
 }
