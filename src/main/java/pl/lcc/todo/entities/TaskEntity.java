@@ -3,6 +3,7 @@ package pl.lcc.todo.entities;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,5 +42,32 @@ public class TaskEntity {
     String remarks;
     
     Set<EventEntity> events;
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TaskEntity other = (TaskEntity) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
 }

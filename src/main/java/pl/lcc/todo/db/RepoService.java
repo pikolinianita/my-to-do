@@ -2,6 +2,7 @@ package pl.lcc.todo.db;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lcc.todo.entities.EventEntity;
@@ -18,6 +19,7 @@ import pl.lcc.todo.entities.UserReq;
  *
  * @author piko
  */
+@Slf4j
 @Service
 public class RepoService {
 
@@ -36,19 +38,17 @@ public class RepoService {
         this.tagRepo = tagRepo;
         this.rewRepo = rewRepo;
         this.userRepo = userRepo;
-        System.out.println("repoServ constructor");
+        log.info("repoServ constructor");
     }
 
     @Transactional
     public Optional<ProjectEntity> createProject(long userId, ProjectReq source) {
 
-        System.out.println("---number of projects" + projectRepo.count());
         var owner = userRepo.findById(userId).orElseThrow();
         if (canCreateProject(userId, source.name())) {
-            System.out.println("---will create!!!");
             return saveNewProject(owner, source);
         } else {
-            System.out.println("---Existed!!!");
+            log.info("Project Existed!!!");
             return Optional.empty();
 
         }
@@ -57,7 +57,6 @@ public class RepoService {
     private Optional<ProjectEntity> saveNewProject(UserEntity owner, ProjectReq source) {
         
         var entity = new ProjectEntity(source);
-        System.out.println("Owner: " + owner.toString() + "  project: " + entity.toString());
         var tags = source.tags().stream()
                 .map(name -> {
                     return tagRepo.findByName(name).orElse(new TagEntity(name));
@@ -65,7 +64,6 @@ public class RepoService {
                 .collect(Collectors.toSet());
         entity.setTags(tags);
         owner.addProject(entity); 
-        System.out.println("Owner: " + owner.toString() + "  project: " + entity.toString());
         return Optional.of(entity);
     }
 
@@ -88,7 +86,7 @@ public class RepoService {
     @Transactional
     public Optional<UserEntity> createUser(UserReq source) {
 
-        System.out.println("number of users" + userRepo.count());
+        log.info("number of users" + userRepo.count());
         if (userRepo.findByName(source.name()).isEmpty()) {
             return Optional.of(userRepo.save(new UserEntity(source)));
         } else {
@@ -99,12 +97,9 @@ public class RepoService {
     @Transactional
     public Optional<EventEntity> createEvent(long userId, long projectId, EventReq req){
         
-        System.out.println("create");
-        var event = new EventEntity(req);
-        System.out.println(event);        
+        log.info("create Event");
+        var event = new EventEntity(req);       
         projectRepo.findById(projectId).orElseThrow().addEvent(event);
-        
-        System.out.println("after repo");
         return Optional.of(event);
     }
     
@@ -125,7 +120,7 @@ public class RepoService {
     @Transactional
     public boolean removeProject(long userId, long projectID){
         var user = userRepo.findById(userId).orElseThrow().removeProject(projectID);
-        
+        log.info("deleted user: " + user.getName());
         //projectRepo.deleteById(projectID);
         return true;
     }
