@@ -11,11 +11,9 @@ import java.util.List;
  */
 public record UserDTO (long id, String name, List<ProjectStub> projects){
 
-   // public UserDTO(long id, String name, Collection<ProjectEntity> projects){
      public UserDTO(UserEntity user){
         this(user.getId(), user.getName(), user.getProjects().stream().map(entity -> new ProjectStub(entity.getId(), entity.getName())).toList());
     }
-    
 }
 
-record ProjectStub(long id, String name){};
+record ProjectStub(long id, String name){}
