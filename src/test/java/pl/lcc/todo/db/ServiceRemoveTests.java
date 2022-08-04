@@ -139,4 +139,17 @@ public class ServiceRemoveTests {
         softly.assertThat(ERepo.count()).as("Events").isEqualTo(5);
         softly.assertAll();
     }
+    
+    @Test
+    void getUserTest(){
+        var result = service.getUserByName("Worker");
+        var result2 = service.getUserByName("Lazy Guy");
+        var resultEmpty = service.getUserByName("Not Exist");
+        assertThat(resultEmpty).isEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get().name()).isEqualTo("Worker");
+        assertThat(result.get().projects()).hasSize(3);
+        assertThat(result2.get().name()).isEqualTo("Lazy Guy");
+        assertThat(result2.get().projects()).hasSize(0);
+    }
 }

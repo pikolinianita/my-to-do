@@ -76,6 +76,10 @@ public class RepoService {
         return projectRepo.findByOwner_IdAndName(userId, name);
     }
 
+    public Optional<ProjectDTO> getProject(long userId, long projectId){
+       return projectRepo.findById(projectId).map(ProjectDTO::new);
+    }
+    
     public Optional<UserEntity> findUser(String name) {
         return userRepo.findByName(name);
     }
@@ -125,6 +129,7 @@ public class RepoService {
         return true;
     }
 
+<<<<<<< HEAD
     @Transactional
     public Optional<ProjectDTO> getProject(long userId, long projectId) {
        return projectRepo.findByOwner_IdAndId(userId, projectId).map(ProjectDTO::new);        
@@ -133,6 +138,18 @@ public class RepoService {
      @Transactional
     public Optional<EventDTO> getEvent(long userId, long eventId) {
         return eventRepo.findEventByProject_Owner_IdAndId(userId, eventId).map(EventDTO::new);        
+=======
+    public Optional<UserDTO> getUserByName(String name) {
+       var userOpt = userRepo.findByName(name);
+       if(userOpt.isEmpty()){
+        return Optional.empty();
+       }
+       else
+       {
+           var user = userOpt.get();
+           return Optional.of(new UserDTO(user.getName(), user.getId(), user.getProjects()));
+       }
+>>>>>>> 168b214f8d2eb9d7205a7823b4a1a801cadfb428
     }
     
 }
