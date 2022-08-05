@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lcc.todo.db.RepoService;
 import pl.lcc.todo.entities.EventDTO;
+import pl.lcc.todo.entities.EventEntity;
+import pl.lcc.todo.entities.EventReq;
 import pl.lcc.todo.entities.ProjectDTO;
 import pl.lcc.todo.entities.UserDTO;
 import pl.lcc.todo.entities.ProjectEntity;
@@ -44,7 +47,7 @@ StopWatch timeMeasure;
     }
 
     @PostMapping(value = "/projectX")
-    ResponseEntity<String> createProject(@RequestBody ProjectReq req) {
+    ResponseEntity<String> createProjectX(@RequestBody ProjectReq req) {
         timeMeasure.start();
         ResponseEntity<String> result;
         log.info("project: " + req);
@@ -58,22 +61,44 @@ StopWatch timeMeasure;
         return result;
     }
 
-    @GetMapping(value = "/task")
-    String getTask() {
-        log.info("task get");
-        return "Tasks";
+    @DeleteMapping(value = "/project/{userId}/{projectId}")
+    ResponseEntity<Long> deleteProject(@PathVariable long userId,@PathVariable long projectId){
+        return repos.removeProject(userId, projectId) ?               
+               ResponseEntity.ok(projectId) :
+               ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    
+    @DeleteMapping(value = "/project/{userId}/{projectId}")
+    ResponseEntity<Long> deleteUser(@PathVariable long userId){
+        return repos.removeUser(userId) ?               
+               ResponseEntity.ok(userId) :
+               ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+   
+    @DeleteMapping(value = "/event/{userId}/{projectId}/{eventId}")
+    ResponseEntity<Long> deleteEvent(@PathVariable long userId,@PathVariable long projectId,@PathVariable long eventId){
+        return repos.deleteEvent(userId, projectId, eventId)
+                .map(EventEntity::getId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-     @PostMapping(value = "/task")
-    String createTask() {
-        log.info("task created");
-        return "Not Implemented yet - post Task";
+    @PostMapping(value = "/event/{userId}/{projectId}")
+    ResponseEntity<Long> createEvent(@PathVariable long userId,@PathVariable long projectId, @RequestBody EventReq eventReq) {
+        
+        return repos.createEvent(userId, projectId, eventReq)
+                .map(EventEntity::getId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-
-    @PostMapping(value = "/event")
-    String createEvent() {
-        log.info("event created");
-        return "Not Implemented yet - post Event";
+    
+    @PostMapping(value = "/project/{id}")
+    ResponseEntity<Long> createProject(@PathVariable long id, @RequestBody ProjectReq project){
+        
+        return repos.createProject(id, project)
+                .map(ProjectEntity::getId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     
     @PostMapping(value = "/user")
