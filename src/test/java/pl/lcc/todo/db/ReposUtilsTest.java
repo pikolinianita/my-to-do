@@ -27,7 +27,7 @@ public class ReposUtilsTest {
    
    @Test
    void testSimple(){
-      assertThat(util.dumpDB("e://dump test.dmp")).isNotEmpty();
+      assertThat(util.dumpDB("dumptest.dmp")).isNotEmpty();
    }
     
    @Test

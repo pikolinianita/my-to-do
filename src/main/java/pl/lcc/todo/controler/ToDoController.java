@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ import pl.lcc.todo.entities.UserEntity;
  */
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("/api")
 public class ToDoController {
 
@@ -68,7 +70,7 @@ StopWatch timeMeasure;
                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     
-    @DeleteMapping(value = "/project/{userId}/{projectId}")
+    @DeleteMapping(value = "/user/{userId}/{projectId}")
     ResponseEntity<Long> deleteUser(@PathVariable long userId){
         return repos.removeUser(userId) ?               
                ResponseEntity.ok(userId) :
