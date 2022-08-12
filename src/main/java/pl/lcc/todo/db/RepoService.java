@@ -134,4 +134,8 @@ public class RepoService {
         return eventRepo.findEventByProject_Owner_IdAndId(userId, eventId).map(EventDTO::new);
     }
 
+    public Optional<UserDTO> findUserWithProjects(String name) {
+        return findUser(name).map(UserDTO::new);
+    }
+
 }

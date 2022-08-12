@@ -64,13 +64,13 @@ StopWatch timeMeasure;
     }
 
     @DeleteMapping(value = "/project/{userId}/{projectId}")
-    ResponseEntity<Long> deleteProject(@PathVariable long userId,@PathVariable long projectId){
+    ResponseEntity<Long> deleteProject(@PathVariable long userId, @PathVariable long projectId){
         return repos.removeProject(userId, projectId) ?               
                ResponseEntity.ok(projectId) :
                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     
-    @DeleteMapping(value = "/user/{userId}/{projectId}")
+    @DeleteMapping(value = "/user/{userId}")
     ResponseEntity<Long> deleteUser(@PathVariable long userId){
         return repos.removeUser(userId) ?               
                ResponseEntity.ok(userId) :
@@ -114,6 +114,13 @@ StopWatch timeMeasure;
     @GetMapping(value = "/user/{id}")
     ResponseEntity<UserDTO> getUser(@PathVariable long id){
         return repos.findUserWithProjects(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    
+    @GetMapping(value = "/user/name/{name}")
+    ResponseEntity<UserDTO> getUser(@PathVariable String name){
+        return repos.findUserWithProjects(name)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
