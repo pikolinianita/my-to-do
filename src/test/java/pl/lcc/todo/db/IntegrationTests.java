@@ -7,20 +7,16 @@ package pl.lcc.todo.db;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.assertj.core.api.SoftAssertions;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import pl.lcc.todo.entities.UserReq;
-import org.assertj.core.api.SoftAssertions;
 import static org.assertj.core.api.Assertions.assertThat;
 import pl.lcc.todo.entities.EventReq;
 import pl.lcc.todo.entities.ProjectReq;
@@ -39,17 +35,6 @@ public class IntegrationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // @MockBean
-    // private RegisterUseCase registerUseCase;
-    @Autowired
-    private UserRepository URepo;
-
-    @Test
-    void objTest() throws Exception {
-        var x = objectMapper.writeValueAsString(new UserReq("aha"));
-        System.out.println(x);
-    }
-
     @Test
     void happyTest() throws Exception {
 
@@ -61,7 +46,7 @@ public class IntegrationTests {
         final var EVENT3NAME = "Baking";
         final var EVENT4NAME = "Simmering";
 
-        //create User and get it  
+    //create User and get it  
         var userPostRequesrBody = objectMapper.writeValueAsString(new UserReq(NAME));
 
         var projectPostRequestBody1 = objectMapper.writeValueAsString(
@@ -92,7 +77,7 @@ public class IntegrationTests {
         assertThat(resultStringGet1).as("should be empty user with name" + NAME)
                 .contains(NAME);
 
-        //create Two Projects and get them
+    //create Two Projects and get them
         var resultProject1Post = mockMvc.perform(post("/api/project/" + userIdAsString)
                 .contentType("application/json")
                 .content(projectPostRequestBody1))
@@ -106,9 +91,6 @@ public class IntegrationTests {
         var project1IdAsString = resultProject1Post.getResponse().getContentAsString();
         var project2IdAsString = resultProject2Post.getResponse().getContentAsString();
 
-        System.out.println(project1IdAsString);
-        System.out.println(project2IdAsString);
-
         var resultStringGetProject1 = mockMvc.perform(get("/api/project/" + userIdAsString + "/" + project1IdAsString)
                 .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -121,15 +103,13 @@ public class IntegrationTests {
                 .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         
-        System.out.println(resultStringGet2);
-        
         assertThat(resultStringGetProject1).as("it project ").contains(PROJ1NAME);        
         assertThat(resultStringGetProject2).as("cooking project ").contains(PROJ2NAME);
         
         assertThat(resultStringGet2).as("should be user with name: " + NAME + " and two projects")
                 .contains(NAME).contains(PROJ1NAME).contains(PROJ2NAME);
         
-        //add two events to each and get them
+    //add two events to each and get them
         
          var resultEvent1Post = mockMvc.perform(post("/api/event/" + userIdAsString + "/" +  project1IdAsString)
                 .contentType("application/json")
@@ -155,8 +135,6 @@ public class IntegrationTests {
         var event2IdAsString = resultEvent2Post.getResponse().getContentAsString();
         var event3IdAsString = resultEvent3Post.getResponse().getContentAsString();
         var event4IdAsString = resultEvent4Post.getResponse().getContentAsString();
-        
-        System.out.println(event1IdAsString);
         
         var resultStringGetEvent1 = mockMvc.perform(get("/api/event/" + userIdAsString + "/" + event1IdAsString)
                 .contentType("application/json"))
@@ -190,9 +168,7 @@ public class IntegrationTests {
         assertThat(resultStringGetProjectWithEvent1).contains(EVENT1NAME).contains(EVENT2NAME).contains(PROJ1NAME);
         assertThat(resultStringGetProjectWithEvent2).contains(EVENT3NAME).contains(EVENT4NAME).contains(PROJ2NAME);
         
-        System.out.println(resultStringGetProjectWithEvent1);
-        
-        //delete one task
+    //delete one task
 
          mockMvc.perform(delete("/api/event/" + userIdAsString + "/" + project1IdAsString + "/" + event1IdAsString)
                  .contentType("application/json"))
@@ -208,7 +184,7 @@ public class IntegrationTests {
          
          assertThat(resultStringGetProjectAfterOneEventDeleted).doesNotContain(EVENT1NAME).contains(EVENT2NAME).contains(PROJ1NAME);
          
-        //delete one project
+    //delete one project
          mockMvc.perform(delete("/api/project/" + userIdAsString + "/" + project2IdAsString)
                  .contentType("application/json"))
                 .andExpect(status().isOk());
@@ -224,13 +200,11 @@ public class IntegrationTests {
           var resultStringUserProjectDeleted = mockMvc.perform(get("/api/user/" + userIdAsString)
                 .contentType("application/json"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-         
-          System.out.println(resultStringUserProjectDeleted);
           
           assertThat(resultStringUserProjectDeleted)
                   .contains(NAME).contains(PROJ1NAME).doesNotContain(PROJ2NAME);
           
-        //delete user
+    //delete user
         mockMvc.perform(delete("/api/user/" + userIdAsString)
                 .contentType("application/json"))
                 .andExpect(status().isOk());
@@ -249,7 +223,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void deleteTest() throws Exception {
+    void deleteTest() throws Exception {
 
         mockMvc.perform(delete("/api/user/1")
                 .contentType("application/json"))

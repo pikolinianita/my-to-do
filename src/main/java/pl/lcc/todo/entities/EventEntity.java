@@ -29,7 +29,7 @@ public class EventEntity {
     @NonNull
     String name;
 
-    @NotNull
+    @NonNull
     LocalDateTime timeFrom;
 
     @NonNull
