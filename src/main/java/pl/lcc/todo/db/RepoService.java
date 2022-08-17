@@ -95,8 +95,8 @@ public class RepoService {
     @Transactional
     public Optional<EventEntity> deleteEvent(long userId, long projectId, long eventId) {
         var project = projectRepo.findById(projectId).orElseThrow();
-        var event = eventRepo.findById(userId).orElseThrow();
-        project.removeEvent(event);
+        var event = eventRepo.findById(eventId).orElseThrow(); 
+        project.removeEvent(event);      
         return Optional.of(event);
     }
 

@@ -4,6 +4,7 @@
  */
 package pl.lcc.todo.controler;
 
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,10 +95,10 @@ StopWatch timeMeasure;
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     
-    @PostMapping(value = "/project/{id}")
-    ResponseEntity<Long> createProject(@PathVariable long id, @RequestBody ProjectReq project){
+    @PostMapping(value = "/project/{userId}")
+    ResponseEntity<Long> createProject(@PathVariable long userId, @RequestBody ProjectReq project){
         
-        return repos.createProject(id, project)
+        return repos.createProject(userId, project)
                 .map(ProjectEntity::getId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());

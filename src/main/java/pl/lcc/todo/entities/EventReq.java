@@ -2,6 +2,7 @@
 package pl.lcc.todo.entities;
 
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 /**
  *
